@@ -26,6 +26,36 @@ export const getProducts = async (req: Request, res: Response) => {
   }
 };
 
+// Get seller's own products
+export const getSellerProducts = async (req: Request, res: Response) => {
+  try {
+    const sellerId = (req as any).user.userId;
+
+    const products = await prisma.product.findMany({
+      where: {
+        sellerId: sellerId
+      },
+      include: {
+        seller: {
+          select: {
+            id: true,
+            name: true,
+            email: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+
+    res.json(products);
+  } catch (error) {
+    console.error('Get seller products error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
 // Get product by ID
 export const getProductById = async (req: Request, res: Response) => {
   try {

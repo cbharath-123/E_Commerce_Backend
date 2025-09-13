@@ -56,6 +56,10 @@ exports.register = register;
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
+        // Validate input
+        if (!email || !password) {
+            return res.status(400).json({ message: 'Email and password are required' });
+        }
         // Find user
         const user = await app_1.prisma.user.findUnique({
             where: { email }
@@ -70,16 +74,34 @@ const login = async (req, res) => {
         }
         // Generate JWT token
         const token = jsonwebtoken_1.default.sign({ userId: user.id, email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
-        res.json({
-            message: 'Login successful',
-            token,
-            user: {
-                id: user.id,
-                email: user.email,
-                name: user.name,
-                role: user.role
-            }
-        });
+        // Check if user is a seller - they need OTP verification
+        if (user.role === 'SELLER') {
+            res.json({
+                message: 'Login successful - OTP verification required',
+                token, // Basic token for OTP request
+                user: {
+                    id: user.id,
+                    email: user.email,
+                    name: user.name,
+                    role: user.role
+                },
+                requiresOTP: true // Flag to indicate OTP verification needed
+            });
+        }
+        else {
+            // Regular users (buyers) don't need OTP
+            res.json({
+                message: 'Login successful',
+                token,
+                user: {
+                    id: user.id,
+                    email: user.email,
+                    name: user.name,
+                    role: user.role
+                },
+                requiresOTP: false
+            });
+        }
     }
     catch (error) {
         console.error('Login error:', error);

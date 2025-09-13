@@ -11,4 +11,11 @@ const router = express_1.default.Router();
 router.post('/register', authController_1.register);
 router.post('/login', authController_1.login);
 router.get('/profile', auth_1.authenticateToken, authController_1.getProfile);
+// Test route to verify token
+router.get('/verify', auth_1.authenticateToken, (req, res) => {
+    res.json({
+        message: 'Token is valid',
+        user: req.user
+    });
+});
 exports.default = router;

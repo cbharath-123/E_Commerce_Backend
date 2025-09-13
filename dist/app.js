@@ -12,6 +12,7 @@ const client_1 = require("@prisma/client");
 const auth_1 = __importDefault(require("./routes/auth"));
 const products_1 = __importDefault(require("./routes/products"));
 const users_1 = __importDefault(require("./routes/users"));
+const otp_1 = __importDefault(require("./routes/otp"));
 // Load environment variables
 dotenv_1.default.config();
 // Initialize Express app
@@ -20,13 +21,21 @@ const port = process.env.PORT || 5000;
 // Initialize Prisma client
 exports.prisma = new client_1.PrismaClient();
 // Middleware
-app.use((0, cors_1.default)());
+app.use((0, cors_1.default)({
+    origin: [
+        process.env.FRONTEND_URL || 'http://localhost:3000',
+        'http://localhost:3000',
+        'http://localhost:3001'
+    ],
+    credentials: true
+}));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 // Routes
 app.use('/api/auth', auth_1.default);
 app.use('/api/products', products_1.default);
 app.use('/api/users', users_1.default);
+app.use('/api/otp', otp_1.default);
 // Health check route
 app.get('/', (req, res) => {
     res.json({ message: 'E-commerce API is running!' });

@@ -10,6 +10,7 @@ async function main() {
 
   // Create demo users
   const hashedPassword = await bcrypt.hash('password123', 12);
+  const specificUserPassword = await bcrypt.hash('-HT6pDraBb6LF6-', 12);
 
   const demoUser = await prisma.user.create({
     data: {
@@ -25,6 +26,16 @@ async function main() {
       email: 'seller@demo.com',
       password: hashedPassword,
       name: 'Demo Seller',
+      role: 'SELLER',
+    },
+  });
+
+  // Create the specific user from the screenshot
+  const specificUser = await prisma.user.create({
+    data: {
+      email: 'cbharath20064@gmail.com',
+      password: specificUserPassword,
+      name: 'Bharath',
       role: 'SELLER',
     },
   });

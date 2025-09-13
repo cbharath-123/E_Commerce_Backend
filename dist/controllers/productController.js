@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteProduct = exports.updateProduct = exports.createProduct = exports.getProductById = exports.getProducts = void 0;
+exports.deleteProduct = exports.updateProduct = exports.createProduct = exports.getProductById = exports.getSellerProducts = exports.getProducts = void 0;
 const app_1 = require("../app");
 // Get all products
 const getProducts = async (req, res) => {
@@ -27,6 +27,35 @@ const getProducts = async (req, res) => {
     }
 };
 exports.getProducts = getProducts;
+// Get seller's own products
+const getSellerProducts = async (req, res) => {
+    try {
+        const sellerId = req.user.userId;
+        const products = await app_1.prisma.product.findMany({
+            where: {
+                sellerId: sellerId
+            },
+            include: {
+                seller: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true
+                    }
+                }
+            },
+            orderBy: {
+                createdAt: 'desc'
+            }
+        });
+        res.json(products);
+    }
+    catch (error) {
+        console.error('Get seller products error:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+exports.getSellerProducts = getSellerProducts;
 // Get product by ID
 const getProductById = async (req, res) => {
     try {

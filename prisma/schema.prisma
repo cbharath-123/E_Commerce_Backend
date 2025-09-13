@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   email     String   @unique
   password  String
   name      String
@@ -23,13 +23,14 @@ model User {
   updatedAt DateTime @updatedAt
   
   // Relations
-  products  Product[]
+  products         Product[]
+  otpVerifications OtpVerification[]
   
   @@map("users")
 }
 
 model Product {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
   name        String
   description String?
   price       Float
@@ -46,6 +47,21 @@ model Product {
   seller      User     @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   
   @@map("products")
+}
+
+model OtpVerification {
+  id        String   @id @default(uuid())
+  userId    String
+  otpCode   String
+  expiresAt DateTime
+  verified  Boolean  @default(false)
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
+  
+  // Relations
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("otp_verifications")
 }
 
 enum UserRole {

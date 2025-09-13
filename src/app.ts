@@ -7,6 +7,7 @@ import { PrismaClient } from '@prisma/client';
 import authRoutes from './routes/auth';
 import productRoutes from './routes/products';
 import userRoutes from './routes/users';
+import otpRoutes from './routes/otp';
 
 // Load environment variables
 dotenv.config();
@@ -19,7 +20,14 @@ const port = process.env.PORT || 5000;
 export const prisma = new PrismaClient();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: [
+    process.env.FRONTEND_URL || 'http://localhost:3000',
+    'http://localhost:3000',
+    'http://localhost:3001'
+  ],
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -27,6 +35,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/otp', otpRoutes);
 
 // Health check route
 app.get('/', (req, res) => {
