@@ -7,7 +7,6 @@ import { PrismaClient } from '@prisma/client';
 import authRoutes from './routes/auth';
 import productRoutes from './routes/products';
 import userRoutes from './routes/users';
-import otpRoutes from './routes/otp';
 
 // Load environment variables
 dotenv.config();
@@ -35,7 +34,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/otp', otpRoutes);
 
 // Health check route
 app.get('/', (req, res) => {

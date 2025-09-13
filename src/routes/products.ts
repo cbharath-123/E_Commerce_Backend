@@ -8,16 +8,15 @@ import {
   getSellerProducts
 } from '../controllers/productController';
 import { authenticateToken } from '../middleware/auth';
-import { authenticateSellerWithOTP } from '../middleware/sellerAuth';
 
 const router = express.Router();
 
 // Product routes
 router.get('/', getProducts);
-router.get('/seller/my-products', authenticateSellerWithOTP, getSellerProducts); // Seller-only route with OTP
+router.get('/seller/my-products', authenticateToken, getSellerProducts); // New route for seller's products
 router.get('/:id', getProductById);
-router.post('/', authenticateSellerWithOTP, createProduct); // Seller-only route with OTP
-router.put('/:id', authenticateSellerWithOTP, updateProduct); // Seller-only route with OTP
-router.delete('/:id', authenticateSellerWithOTP, deleteProduct); // Seller-only route with OTP
+router.post('/', authenticateToken, createProduct);
+router.put('/:id', authenticateToken, updateProduct);
+router.delete('/:id', authenticateToken, deleteProduct);
 
 export default router;

@@ -91,33 +91,16 @@ export const login = async (req: Request, res: Response) => {
       { expiresIn: '7d' }
     );
 
-    // Check if user is a seller - they need OTP verification
-    if (user.role === 'SELLER') {
-      res.json({
-        message: 'Login successful - OTP verification required',
-        token, // Basic token for OTP request
-        user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role
-        },
-        requiresOTP: true // Flag to indicate OTP verification needed
-      });
-    } else {
-      // Regular users (buyers) don't need OTP
-      res.json({
-        message: 'Login successful',
-        token,
-        user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role
-        },
-        requiresOTP: false
-      });
-    }
+    res.json({
+      message: 'Login successful',
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role
+      }
+    });
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ message: 'Internal server error' });
